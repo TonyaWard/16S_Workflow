@@ -11,7 +11,7 @@ knitr::opts_chunk$set(results='hide')
 
 ------------
 
-### Learning Objectives  
+## Learning Objectives  
 
 * Understand the first steps to 16S sequence analysis  
 * Understand what QIIME is and how we can use it  
@@ -24,7 +24,7 @@ knitr::opts_chunk$set(results='hide')
 16S amplicon sequencing is commonly used for indentifying and classifying bacteria within a particular environment. It allows us use a small region of DNA from the genome of each bacterium in a sample to determine which microbes are present and perform microbial diversity analyses to help us understand the microbial ecosystem.  
 
 
-## 16S rRNA Gene
+### 16S rRNA Gene
 
 The 16S ribosomal RNA gene (16S rRNA) is approximately 1,500 bp long, and contains nine variable regions separated by conserved regions. We use the variable regions of the gene to distinguish one bacterial type from another. One of the most commonly sequenced variable regions is the  V3 - V4 region that spans approaximately 469 bp (Fadrosh et al. Microbiome. 2014).   
 
@@ -33,7 +33,7 @@ The 16S ribosomal RNA gene (16S rRNA) is approximately 1,500 bp long, and contai
 One reason this region is a popular sequencing target is the length. Often we use paired-end 250 bp sequencing, which allows us to span more than half of the V3-V4 region in each direction. This means we can stitch the paired reads together to produce a longer sequence read that increases the accuracy and specificity of our data.   
 
 
-![16S Paired-End Sequencing (Illumina.com)](paired_end.jpeg)
+![16S Paired-End Sequencing (Illumina.com)](paired_end.jpg)
 
 ## Quality Control of DNA sequences
 
@@ -81,11 +81,13 @@ shi7.py -i raw_miseq_data/ -o qc_reads --adaptor Nextera -s _,1
 
 By default SHI7 will try to stitch the sequences. If you had sequence data that was not paired end, you could specify `-se` to tell SHI7 the data is single end sequencing.
 
+### SHI7 Outputs
+
 The output of SHI7 is a directory containing 2 files:  
 * `shi.log` which is the log file for the QC process  
 *  `combined_seqs.fna` which is all the combined sequences that passed qc  
 
-### SHI7.log
+#### SHI7.log
 
 This file contains all the commands and outputs from the QC process. Information about how many sequences per sample were kept/discarded can be found at the end of the file. To get a peak at this, we can use the `tail` command. 
 
@@ -93,7 +95,7 @@ This file contains all the commands and outputs from the QC process. Information
 tail -n 25 shi.log
 ```
 
-### Combined_seqs.fna
+#### Combined_seqs.fna
 
 This file contains all the sequences for each sample. This file will be used in the downstream analysis and must be formated in a particular way. This file is a fasta file, which is slightly different than a fastq file. Fasta files contain just two lines for each sequence:  
 
@@ -110,16 +112,16 @@ head combined_seqs.fna
 
 The processes of assigning sequences to operational taxonmic units (OTUs) is called OTU picking. Based on a similiarity threshold, we determine which sequences belong to the same group. Often, the similarity threshold we use is 97%. This means that all sequences that are 97% similar will be denoted as the same OTU. We use the term OTU because OTUs can span different levels of the phylogenic tree. For example, one group of sequences that is 97% similar to one another (OTU) may represent Escherichia coli (species level), whereas another group of sequences 97% similar to one another (OTU) may represent Salmonella (genus level). There are 3 main methods to denote which microbes are within a sample, and we will cover these methods below.
 
-### De Novo OTU Picking
+#### De Novo OTU Picking
 
 De novo OTU picking does not use a reference database. The sequences in your dataset are compared to one another and grouped based on the similarity threshold (97% identity). The resulting groups of sequences are then denoted as OTUs. De novo OTU picking utilizes all sequences from all samples in the analysis. Because it doesn't use a reference database, the taxonomy (name) associated with each OTU is not readily available. De novo OTU picking requires the most computational resources and time in comparison to the other OTU picking methods.
 
-### Closed Reference OTU Picking
+#### Closed Reference OTU Picking
 
 Closed reference OTU picking utilizes a reference database of known 16S rRNA sequences. The sequences in your dataset are compared to the reference database and those meeting the 97% identity threshold are donated as the same OTU from the reference database. Closed reference OTU picking will remove all sequences that do not match the reference database within the set threshold (97% identity). The reference database is annotated with taxonomy, so the taxonomy of each OTU in your samples is readily available. Closed reference OTU picking requires the least computational resources and time in comparison to the other OTU picking methods.
 
 
-### Open Reference OTU Picking
+#### Open Reference OTU Picking
 
 Open reference OTU picking combines closed reference OTU picking and de novo OTU picking. First, sequences are compared to the reference database (closed reference OTU picking). Then, the sequences that fail to match the reference database are de novo clustered into new OTUs and combined with the closed-reference OTUs. Open reference OTU picking utilizes all the sequences from all samples in the analysis. Only sequences that align to the reference database will have taxonomy readily available for them. Open reference OTU picking requires more computational resources and time than closed reference OTU picking.
 
@@ -139,11 +141,12 @@ ninja.py -i qc_reads/combined_seqs.fna -o ninja_otus -m normal -p 4 -z -d 2
 `-z` Specifies to search both directions  
 `id` Specifies the denoising level; 2 means discard any sequences appearing <2 times  
 
+### NINJA Outputs
 The output of NINJA is a directory containing 2 files:  
 * `ninja_log.txt` which is the log file for the OTU picking process  
 * `ninja_otutable.biom` which is OTU table  
 
-### ninja_log.txt
+#### ninja_log.txt
 
 This file contains all the commands and outputs from OTU picking. To open this file and look at the performance of OTU picking we can use `nano`. 
 
@@ -151,7 +154,7 @@ This file contains all the commands and outputs from OTU picking. To open this f
 nano ninja_log.txt
 ```
 
-### ninja_otutable.biom
+#### ninja_otutable.biom
 
 This file is our OTU table in biom format. An OTU table contains the samples as columns, and OTUs as rows. The values in the table are the number of times an OTU was counted within each sample, as well as some corresponding metadata such as the taxonomy assocaited with each OTU. When in biom format, the file is not human readable. Biom is a way to package a lot of information in a way that doesn't take up too much space. If you call `head` on a biom file, the output will look mostly like gibberish. What is important is that QIIME and other microbiome softwares use biom files because they are smaller and fast to work with. If you want to put your OTU table in a human-readable format you have to convert it to a tab-delimited file. We will cover how to do this later.
 
@@ -174,12 +177,12 @@ QIIME uses a mix of other existing softwares and algorithms to perform its tasks
 
 Try going to this page and click some of the commands links, for example click **`summarize_taxa.py`** and read what this command does, what the inputs are and the examples.
 
-### Usingg QIIME
+### Using QIIME
 To determine how to run a command, we have to look up the documentation.  We can either go to the command webpage mentioned above and click on the command we want, or we can use the *help* flag for the command we are unsure about.  
 
 By specifying `-h` the command will list the documentation associated with it.  This output will not be as comprehensive as what is available online, but will at least tell us all the possible inputs and outputs.  
 
-## Example
+### Example
 ```{r eval=F}
 collapse_samples.py -h
 ```
@@ -202,6 +205,15 @@ Optionally, we can also determine:
     + The collapse mode
     + To normalize or not  
 
+### Parameter File
+
+Some of the commands in QIIME require a parameter file to specify some extra details. In this workshop we will create a parameters file that will house the parameters needed for alpha and beta diversity. We can create a text file with `nano`. We close the file with the commands located at the bottom of the nano-screen.
+
+```{r, eval=F}
+nano parameters.txt
+beta_diversity:metrics  bray_curtis,unweighted_unifrac,weighted_unifrac
+alpha_diversity:metrics shannon,PD_whole_tree,observed_species
+```
 
 ## Inspecting an OTU Table
 
@@ -236,7 +248,7 @@ In microbiome research, diversity represents the number OTUs within in a data se
 
 To prevent any bias we may see in our diversity analysis we can rarefy our data. A rarefaction is a random collection of sequences from a sample, with a specified number of sequences (depth). For example, a rarefaction with a depth of 1,000 reads per sample is a simulation of what your sequencing results would look like if you sequenced exactly 1,000 reads from each sample. By rarefying our OTU table we can fairly measure alpha diversity across samples.  
 
-## Exploring Rarefied Data with QIIME
+### Exploring Rarefied Data with QIIME
 In QIIME, we can first explore our data by looking at alpha diversity across multiple different sequencing depths. This task is performed using the `alpha_rarefaction.py` command that takes your OTU table and makes a directory full of many OTU tables, all of which are repeats of rarefactions at specfifc depths. The output of this command allows us to visualize how measurements in alpha diversity will change across a range of sequence depths per sample. Once we know how the diversity changes with depth, we can create one final rarefied table to use for our alpha diversity and beta diversity calculations.  
 
 The command is run using these parameters:
@@ -261,6 +273,7 @@ The `alpha_rarefaction.py` command will do multiple things:
 (5) Deletes all of intermediate the OTU tables it had generated to do the analysis
 (6) Creates a log file and overall rarefaction plot within the main output directory  
 
+### alpha_rarefaction.py Outputs
 You will know `alpha_rarefaction.py` is done when you have the following files in your output directory (-o):  
 
 `alpha_div_collated/`  (one table per metric in here)  
@@ -279,7 +292,7 @@ You want to pick a depth that:
 
 Any samples that do not have at least the number of sequences of our rarefaction depth will be dropped from the output OTU table.  Normally, we try to pick a depth where the rarefaction curves begin to level off, or the lowest value possible within the same order of magnitude as the sample with with most sequences. 
 
-## Creating your Rarefied OTU Table
+### Creating your Rarefied OTU Table
 Once you have picked a depth based on the `alpha_rarefaction.py outputs`, you are ready to create a rarefied OTU table.  To do this, we use the `single_rarefaction.py` command with the following parameters:  
 
 ```{r, eval=F}
@@ -310,20 +323,15 @@ Below are some common alpha diversity metrics use in microbiome research. There 
 The simplest diversity index; it is just the number of OTUs.  
 
 #### Chao1 estimator
-
 This is commonly used, and is based upon the number of rare OTUs found in a sample  The problem with this metric is that if a sample contains many singletons (OTUs that happen just once, usually by sequencing error) the Chao 1 index will estimate greater species richness than it would for a sample without rare OTUs. 
 
 #### Shannon index
-
 This index accounts for both abundance and evenness of the species present.  It assumes all species are represented in a sample. 
 
 #### Simpson index
-
-
 The Simpson index is actually a similarity index, so the higher the value the lower diversity in the sample. It gives more weight to common or dominant species. 
 
 ### Phylogenetic Distance (PD Whole Tree)
-
 The phylogenetic distance metric used most often is PD whole tree. It is the sum of all phylogenetic branches connecting OTUs together within a community. 
 
 
@@ -359,16 +367,14 @@ The output of the `alpha_diversity.py` is a table, where the columns are the dif
 In his 1972 publication in Taxon, "Evolution and Measurement of Species Diversity", R. H. Whittaker laid out the terms and concepts for how we think about and define biodiversity. His idea was that the total species diversity in a landscape ($\gamma$ or gamma-diversity) (e.g. ALL human gastrointestinal (GI) tracts) is determined by two different things:  
 
 __1) Alpha diversity__  
-* the mean species diversity at the habitat level    
-* $\alpha$  
+* the mean species diversity at the habitat level     
 * *e.g.* one person's GI tract  
 
 __2) Beta diversity__   
 * the differentiation among habitats  
-* $\beta$  
 * *e.g.* differences between 2 different GI tracts    
  
-The total diversity, **gamma**, is alpha multiplied by beta:  $\gamma$ = $\alpha$ *$\beta$  
+The total diversity, **gamma**, is alpha multiplied by beta:  gamma = alpha * beta  
 
 Let's say you are comparing the biological communities of a 20m2 patch of the Great Barrier Reef (right) and a 20m^2^ of the Amazon rainforest (left).
 
@@ -379,30 +385,28 @@ Both of these habitats have very high alpha ($\alpha$) diversity. However, despi
 ### What are Beta Diversity Metrics?
 There are multiple beta diversity metrics.  Below we will cover some of the most widely used distance metrics for beta diversity.  
 
-### UniFrac Distance
+#### UniFrac Distance
 
 The unique fraction metric, or UniFrac, measures the phylogenetic distance between sets of taxa in a phylogenetic tree. It counts the branch lengths of the tree that lead to taxa from either one environment or the other, but not both (Lozupone & Knight. 2005, Appl Environ Microbiol). This metric is sensitive but also has emphasis on minor differences in the tree.
 
 
-### Weighted Unifrac Distance
+#### Weighted Unifrac Distance
 In the UniFrac metric the relative abundances of taxa is not taken into consideration (referred to as unweighted UniFrac distance). There is a second metric known as weighted UniFrac distance, that weights each OTU based on it's relative abundance. Both metrics are criticized for giving either too much (unweighted) or too little (weighted) value to rare taxa, but both have value in showing different aspects of community diversity.  
 
-### Bray-Curis Dissimilarity
-
+#### Bray-Curis Dissimilarity  
 Bray-Curtis takes the sum of the differences in OTU abundances over the sum of the total OTU abundances between samples. This metric does not take relatedness of the otus into consideration (phylogeny).  
 
 
 **Summary of Beta Diversity Metrics**  
-```{r, echo=F}
-new <- data.frame(matrix("na", nrow=3, ncol=3))
-colnames(new) <- c("**Metric**", "**Phylogeny?**", "**Abundance?**")
-new[,1]  <- c("**weighted UniFrac**", "**unweighted UniFrac**", "**Bray-Cutris**")
-new[,2] <- c("yes", "yes", "no")
-new[,3] <- c("yes", "no", "yes")
-kable(new)
-```
 
-## Exploring Beta Diversity with QIIME?
+**Metric** | **Measurement**
+---------- | -----------------------
+**unweighted UniFrac ** | phylogeny & presence/absence
+**weighted UniFrac** | phylogeny & abundance
+**Bray Curtis** | presence/absence
+
+
+### Exploring Beta Diversity with QIIME
 We will use the `beta_diversity_through_plots.py` command in QIIME to calculate and visualize the beta diversities of our samples. We run this command with the following parameters:
 
 ```{r, eval=F}

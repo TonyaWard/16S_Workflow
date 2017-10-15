@@ -230,7 +230,7 @@ biom summarize-table -i ninja_otus/ninja_otutable.biom -o otu_summary.txt
 
 The summary file will contain:   
 * The number of samples  
-* THe number of observations (OTUs)  
+* The number of observations (OTUs)  
 * The minimum, maximum, median, mode and standard deviations of of the number of counts per sample  
 * The taxonomy is stored as the observation metadata  
 * A list of how many counts are in each sample  
@@ -244,7 +244,7 @@ nano OTU_summary.txt
 ## Rarefaction
 
 ### What is Rarefaction?
-In microbiome research, diversity represents the number OTUs within in a data set. This number can be greatly impacted with different sequencing depths.  For example, the deeper you sequence a sample the more species you will find. This is a problem, especially if you sequence 50,000 reads from one sample and only 1,000 reads from another sample.  
+In microbiome research, diversity represents the number OTUs within in a data set. This number can be greatly impacted by sequencing depth.  For example, the deeper you sequence a sample the more species you will find. This is a problem, especially if you sequence 50,000 reads from one sample and only 1,000 reads from another sample.  
 
 To prevent any bias we may see in our diversity analysis we can rarefy our data. A rarefaction is a random collection of sequences from a sample, with a specified number of sequences (depth). For example, a rarefaction with a depth of 1,000 reads per sample is a simulation of what your sequencing results would look like if you sequenced exactly 1,000 reads from each sample. By rarefying our OTU table we can fairly measure alpha diversity across samples.  
 
@@ -266,12 +266,12 @@ alpha_rarefaction.py -i ninja_otus/ninja_otutable.biom -o alpha_rare -m mouse_ma
 
 The `alpha_rarefaction.py` command will do multiple things:
 
-(1) Create multiple rarefied OTU tables at set increments starting at a minimum level of sequences and stopping at the maximum number of sequences per sample (if not set it will end at the median)
-(2) Run `alpha_diversity.py` on each of the rarefied OTU tables using the parameters set in the parameters file.
-(3) Collates the results for each metric at the various depths into one table per metric, within the `alpha_div_collated/` subdirectory
-(4) Plots the different metrics for each category in the metadata file and places those within the `alpha_rarefaction_plots/` subdirectory
-(5) Deletes all of intermediate the OTU tables it had generated to do the analysis
-(6) Creates a log file and overall rarefaction plot within the main output directory  
+(1) Create multiple rarefied OTU tables at set increments starting at a minimum level of sequences and stopping at the maximum number of sequences per sample (if not set it will end at the median)  
+(2) Run `alpha_diversity.py` on each of the rarefied OTU tables using the parameters set in the parameters file.  
+(3) Collates the results for each metric at the various depths into one table per metric, within the `alpha_div_collated/` subdirectory  
+(4) Plots the different metrics for each category in the metadata file and places those within the `alpha_rarefaction_plots/` subdirectory  
+(5) Deletes all of intermediate the OTU tables it had generated to do the analysis  
+(6) Creates a log file and overall rarefaction plot within the main output directory    
 
 ### alpha_rarefaction.py Outputs
 You will know `alpha_rarefaction.py` is done when you have the following files in your output directory (-o):  
@@ -420,12 +420,12 @@ beta_diversity_through_plots.py -i otutable_r10k.biom -o beta_diversity -m mouse
 
 The `beta_diversity_through_plots.py` command will do multiple things:  
 
-1. Randomly subsample `otu_table.biom` to even number of sequences per sample (specified with `-e`)  
-2. Run `beta_diversity.py` for the diversity metrics wanted (specified with the parameters file via `-p`) and create distance matrices in the main output directory (`metric_dm.txt`)  
-3. Perform a principal coordinates analysis on the result of Step 3 in the main output directory (`metric_pc.txt`)  
-4. Generate a 2D and 3D plots for all mapping fields in the `metric_emperor_pcoa_plot/` subdirectories  
-5. Deletes all of intermediate generated to do the analysis  
-6. Creates a log file and overall rarefaction plot within the main output directory  
+1. Randomly subsample `otu_table.biom` to even number of sequences per sample (specified with `-e`)   
+2. Run `beta_diversity.py` for the diversity metrics wanted (specified with the parameters file via `-p`) and create distance matrices in the main output directory (`metric_dm.txt`)   
+3. Perform a principal coordinates analysis on the result of Step 3 in the main output directory (`metric_pc.txt`)   
+4. Generate a 2D and 3D plots for all mapping fields in the `metric_emperor_pcoa_plot/` subdirectories   
+5. Deletes all of intermediate generated to do the analysis   
+6. Creates a log file and overall rarefaction plot within the main output directory   
 
 ### beta_diversity_through_plots.py Outputs
 You will know `beta_diversity_through_plots.py` is done when you have the following files in your output directory (`-o`):  
@@ -466,11 +466,12 @@ summarize_taxa_through_plots.py -i otutable_r10k.biom -o taxa_summary -m mouse_m
 `-m` Specifies the path to the metadata/mapping file  
 `-t` Specifies column header in the mapping file to plot by 
 
-### summarize_taxa_through_plots.py Output  
+### summarize_taxa_through_plots.py Outputs  
 `The summarize_taxa_through_plots.py` command will:  
 
 1. Create an output directory named whatever you specified for `-o`  
 2. Create OTU tables collapsed at each taxonomic level (2-6) with samples grouped according to your `-c` parameter  
-3.Create taxa summary plots in a subdirectory called `taxa_summary_plots`   
+3.Create taxa summary plots in a subdirectory called `taxa_summary_plots`  
+
 
 <p style="text-align: right; font-size: small;">Page build on: `r format(Sys.time())`</p>

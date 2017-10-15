@@ -255,14 +255,14 @@ The command is run using these parameters:
 ```{r eval=F,}
 alpha_rarefaction.py -i ninja_otus/ninja_otutable.biom -o alpha_rare -m mouse_map.txt -t 97_otus.tree  -p qiime_parameters.txt -e 10000 --min_rare_depth 1000 -n 500
 ```
-`-i` Specifies the path to the OTU table
-`-o` Specifes the directory we'd like to create for our output  
-`-m` Specifies the path to the metadata/mapping file 
-`-t` Specifies the path to the phylogenic tree
-`-p` Specifies the path to the parameters file
-`-e` Specifies the maximum depth
-`--min_rare_depth` Specifies the minimum depth
-`-n` Specifies the number of sequences in each step
+`-i` Specifies the path to the OTU table  
+`-o` Specifes the directory we'd like to create for our output   
+`-m` Specifies the path to the metadata/mapping file   
+`-t` Specifies the path to the phylogenic tree  
+`-p` Specifies the path to the parameters file  
+`-e` Specifies the maximum depth  
+`--min_rare_depth` Specifies the minimum depth  
+`-n` Specifies the number of sequences in each step  
 
 The `alpha_rarefaction.py` command will do multiple things:
 
@@ -298,9 +298,9 @@ Once you have picked a depth based on the `alpha_rarefaction.py outputs`, you ar
 ```{r, eval=F}
 single_rarefaction.py -i ninja_otus/ninja_otutable.biom -o otutable_r10k.biom -d 10000
 ```
-`-i` Specifies the path to the OTU table
-`-o` Specifies the path to the rarefied OTU table
-`-d` Specifies the depth
+`-i` Specifies the path to the OTU table  
+`-o` Specifies the path to the rarefied OTU table  
+`-d` Specifies the depth  
 
 __The output of this command will be the OTU table you use for alpha and beta diversity calculations.__
 
@@ -352,10 +352,10 @@ In QIIME, we can use our rarefied OTU table to calculate alpha diversity. Earlie
 ```{r, eval=F}
 alpha_diversity.py -i otutable_r10k.biom -o alpha_diversity.txt -m shannon,simpson,observed_species,PD_whole_tree -t 97_otus.tree
 ```
-`-i` Specifies the path to the rarefied OTU table
-`-o` Specifies the path to the output file we'd like to create
-`-m` Specifies which alpha diversity metrics to use
-`-t` Specifies the path to the phylogenic tree (needed for phylogenetic metrics)
+`-i` Specifies the path to the rarefied OTU table  
+`-o` Specifies the path to the output file we'd like to create  
+`-m` Specifies which alpha diversity metrics to use  
+`-t` Specifies the path to the phylogenic tree (needed for phylogenetic metrics)  
 
 ### alpha_diversity.py Outputs
 The output of the `alpha_diversity.py` is a table, where the columns are the different diversity metrics and the rows are samples.  We can use this table to make different alpha diversity plots in R.
@@ -380,7 +380,7 @@ Let's say you are comparing the biological communities of a 20m2 patch of the Gr
 
 ![](Fig33.png)
 
-Both of these habitats have very high alpha ($\alpha$) diversity. However, despite similarly high alpha diversity, if you were to compare the composition these two communities at the macroscopic level, they are almost completely non-overlapping. Therefore, they would also have a very high beta diversity ($\beta$).
+Both of these habitats have very high alpha diversity. However, despite similarly high alpha diversity, if you were to compare the composition these two communities at the macroscopic level, they are almost completely non-overlapping. Therefore, they would also have a very high beta diversity.
 
 ### What are Beta Diversity Metrics?
 There are multiple beta diversity metrics.  Below we will cover some of the most widely used distance metrics for beta diversity.  
@@ -401,8 +401,8 @@ Bray-Curtis takes the sum of the differences in OTU abundances over the sum of t
 
 **Metric** | **Measurement**
 ---------- | -----------------------
-**unweighted UniFrac ** | phylogeny & presence/absence
-**weighted UniFrac** | phylogeny & abundance
+**Unweighted UniFrac** | phylogeny & presence/absence
+**Weighted UniFrac** | phylogeny & abundance
 **Bray Curtis** | presence/absence
 
 
@@ -412,11 +412,11 @@ We will use the `beta_diversity_through_plots.py` command in QIIME to calculate 
 ```{r, eval=F}
 beta_diversity_through_plots.py -i otutable_r10k.biom -o beta_diversity -m mouse_map.txt -t 97_otus.tree -p qiime_parameters.txt
 ```
-`-i` Specifies the path to the rarefied OTU table
-`-o` Specifies the path to the output directory we'd like to create
-`-m` Specifies the path to the metadata/mapping file
-`-t` Specifies the path to the phylogenic tree (needed for phylogenetic metrics)
-`-p` Specifies the path to the parameters file
+`-i` Specifies the path to the rarefied OTU table  
+`-o` Specifies the path to the output directory we'd like to create  
+`-m` Specifies the path to the metadata/mapping file  
+`-t` Specifies the path to the phylogenic tree (needed for phylogenetic metrics)  
+`-p` Specifies the path to the parameters file  
 
 The `beta_diversity_through_plots.py` command will do multiple things:  
 
@@ -435,16 +435,42 @@ You will know `beta_diversity_through_plots.py` is done when you have the follow
 `metric_emperor_pcoa_plot` /  (one per metric, 3 total)    
 `log_##.txt`    (log file)  
 
-To look at your plots, you must transfer the entire plot folder from MSI to your computer.  The plot file needs other information supplied within the subfolders.  
+To look at your plots, you can transfer the entire plot folder to your local computer. Note: The plot file needs other information supplied within the subfolders.  
 
-### Manipulating 3D Plots
-Once you have moved the entire plot folder for your metric of choice to your computer, you can click on the `.html` file with the directory to load the plot.   There are many parameters about the plot you can change.  
-```{r, echo=F}
-new <- data.frame(matrix("na", nrow=6, ncol=2))
-colnames(new) <- c("**Parameter**", "**Effect**")
-new[,1]  <- c("**Colors**", "**Visibility**", "**Scaling**", "**Labels**", "**Axes**", "**Options**")
-new[,2] <- c("Change what covariate to color by", "Make some samples more transparent", " Make some samples larger or smaller", " Add sample labels", "Change which principal coordinates are plotted", "Change backgroung/axes colors and save as image")
-kable(new)
-```  
+## Summarizing Taxa 
+### What are Taxa Summaries?
+Summarizing taxa is a way to visualize which taxa are found in our samples. When we summarize taxa we can use the various levels of taxonomy. The following levels are those denoted by GreenGenes for taxonomy.  a
+
+**Level** | **Taxonomy**  | **Example**  
+--------- | ------------- | -----------
+**1** | Kingdom | Bacteria
+**2** | Phylum | Actinobacteria
+**3** | Class | Actinobacteria
+**4** | Order | Actinomycetales
+**5** | Family | Strepmycetacaea
+**6** | Genus | Streptomyces
+**7** | Species | mirabilis
+
+In QIIME, we can use levels 2-6 to summarize taxa.  We can't use level 1 because that would result in no summary (all of our OTUs are bacteria).  We also cannot use level 7, because using 97% identity of a 16S gene cannot readily resolve species from one another.  We summarize taxa with the `summarize_taxa_through_plots.py` command in QIIME.  
+
+### Taxa Summaries in QIIME
+In QIIME, this task is performed on your rarefied OTU table. The QIIME command `summarize_taxa_through_plots.py` takes your OTU table and collapses the table into the various taxonomic levels. It will then plot the taxa summarize for us.  
+
+The command is run using these parameters:  
+
+``` {r, eval=F}
+summarize_taxa_through_plots.py -i otutable_r10k.biom -o taxa_summary -m mouse_map.txt -c Genotype
+```
+`-i` Specifies the path to the rarefied OTU table  
+`-o` Specifies the path to the output directory we'd like to create  
+`-m` Specifies the path to the metadata/mapping file  
+`-t` Specifies column header in the mapping file to plot by 
+
+### summarize_taxa_through_plots.py Output  
+`The summarize_taxa_through_plots.py` command will:  
+
+1. Create an output directory named whatever you specified for `-o`  
+2. Create OTU tables collapsed at each taxonomic level (2-6) with samples grouped according to your `-c` parameter  
+3.Create taxa summary plots in a subdirectory called `taxa_summary_plots`   
 
 <p style="text-align: right; font-size: small;">Page build on: `r format(Sys.time())`</p>

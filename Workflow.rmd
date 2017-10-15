@@ -1,7 +1,7 @@
 ---
 title: 16S Amplicon Sequencing & QIIME
-author: Data Carpentry contributors
-minutes: 15
+author: Tonya Ward
+hours: 6
 ---
 
 
@@ -140,7 +140,7 @@ ninja.py -i qc_reads/combined_seqs.fna -o ninja_otus -m normal -p 4 -z -d 2
 `-m` Specifies the sensitivity mode to run with (normal is perfect for high quality data)  
 `-p` Specifies the number of threads to use (to speed up the alignment)  
 `-z` Specifies to search both directions  
-`id` Specifies the denoising level; 2 means discard any sequences appearing <2 times  
+`-d` Specifies the denoising level; 2 means discard any sequences appearing <2 times  
 
 ### NINJA Outputs
 The output of NINJA is a directory containing 2 files:  

@@ -241,6 +241,54 @@ To open this file and look at the summary we can use `nano`.
 nano OTU_summary.txt
 ```
 
+## Validating Metadata
+
+At different steps in the analysis we use metadata store in a metadate file (also called a mapping file). This file must be properly formated to work with QIIME. In particular the mapping file needs:  
+1. To be a tab-delimited text file
+2. The first column header to be `#SampleID`
+3. To have samples as rows
+4. A unique identifier for each sample
+5. To contain no invalid characters (e.g. headers can be alphanumeric and underscore only)
+
+### Validating Metadata with QIIME
+We can use QIIME to check our mapping file and ensure it contains data in a valid format. To do that, we can use the `validate_mapping_file.py` command with the following parameters:
+```{r, eval=F}
+validate_mapping_file.py -m mouse_map.txt -o mapping_validation
+```
+`-m` Specifies the file path to the mapping file
+`-o` Specifies the path to the output directory we'd like to create  
+
+### validate_mapping_file.py Outputs
+The command will generate a directory containing different files for us:
+`map_corrected.txt` A QIIME-correct version of the mapping file
+`map.html` `overlib.js` A web document that allows us to explore the mapping file and errors
+`map.log` A log of the errors found
+
+**Note:** Because we are not using QIIME to clean the data or pick OTUs, not having the barcodes adaptors (linker sequences) listed in the mapping file with not be an issue.
+
+
+### Biom Summary
+To create a sumamry file of our OTU table we can use the `biom summarize-table` command:
+```{r ,eval=F}
+biom summarize-table -i ninja_otus/ninja_otutable.biom -o otu_summary.txt
+```  
+
+`-i` Specifies the path to the OTU table created by NINJA
+`-o` Specifes the path to the summary file we'd like to create
+
+The summary file will contain:   
+* The number of samples  
+* The number of observations (OTUs)  
+* The minimum, maximum, median, mode and standard deviations of of the number of counts per sample  
+* The taxonomy is stored as the observation metadata  
+* A list of how many counts are in each sample  
+
+To open this file and look at the summary we can use `nano`. 
+
+``` {r, eval=F}
+nano OTU_summary.txt
+```
+
 ## Rarefaction
 
 ### What is Rarefaction?
@@ -376,7 +424,7 @@ __2) Beta diversity__
  
 The total diversity, **gamma**, is alpha multiplied by beta:  gamma = alpha * beta  
 
-Let's say you are comparing the biological communities of a 20m2 patch of the Great Barrier Reef (right) and a 20m^2^ of the Amazon rainforest (left).
+Let's say you are comparing the biological communities of a 20m x 20m patch of the Great Barrier Reef (right) and a 20m x 20m plot of the Amazon rainforest (left).
 
 ![](Fig33.png)
 
@@ -470,8 +518,8 @@ summarize_taxa_through_plots.py -i otutable_r10k.biom -o taxa_summary -m mouse_m
 `The summarize_taxa_through_plots.py` command will:  
 
 1. Create an output directory named whatever you specified for `-o`  
-2. Create OTU tables collapsed at each taxonomic level (2-6) with samples grouped according to your `-c` parameter  
-3.Create taxa summary plots in a subdirectory called `taxa_summary_plots`  
+2. Create OTU tables collapsed at each taxonomic level (2-6) with samples grouped according to your `-c` parameter   
+3. Create taxa summary plots in a subdirectory called `taxa_summary_plots`  
 
 
 <p style="text-align: right; font-size: small;">Page build on: `r format(Sys.time())`</p>

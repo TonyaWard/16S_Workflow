@@ -133,7 +133,8 @@ We can run NINJA with the following parameters:
 
 ```{r, eval=F}
 ninja.py -i qc_reads/combined_seqs.fna -o ninja_otus -m normal -p 4 -z -d 2
-``
+```
+
 `-i` Specifies the path to the combined_seqs.fna file  
 `-o` Specifes the directory we'd like to create for our output  
 `-m` Specifies the sensitivity mode to run with (normal is perfect for high quality data)  

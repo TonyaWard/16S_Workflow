@@ -1,0 +1,196 @@
+---
+title: 16S Amplicon Sequencing & QIIME
+author: Data Carpentry contributors
+minutes: 15
+---
+
+
+```{r, echo=FALSE, purl=FALSE}
+knitr::opts_chunk$set(results='hide')
+```
+
+------------
+
+### Learning Objectives  
+
+* Describe 16S amplicon sequencing is  
+* Understand the first steps to 16S sequence analysis  
+* Understand what QIIME is and how we can use it  
+
+------------
+
+
+## What is 16S Amplicon Sequencing?
+
+16S amplicon sequencing is commonly used for indentifying and classifying bacteria within a particular environment. It allows us use a small region of DNA from the genome of each bacterium in a sample to determine which microbes are present and perform microbial diversity analyses to help us understand the microbial ecosystem.  
+
+
+## 16S rRNA Gene
+
+The 16S ribosomal RNA gene (16S rRNA) is approximately 1,500 bp long, and contains nine variable regions separated by conserved regions. We use the variable regions of the gene to distinguish one bacterial type from another. One of the most commonly sequenced variable regions is the  V3 - V4 region that spans approaximately 469 bp (Fadrosh et al. Microbiome. 2014).   
+
+![16S rRNA Variable Regions (http://www.lcsciences.com/)](img/16s-gene.png)
+
+One reason this region is a popular sequencing target is the length. Often we use paired-end 250 bp sequencing, which allows us to span more than half of the V3-V4 region in each direction. This means we can stitch the paired reads together to produce a longer sequence read that increases the accuracy and specificity of our data.   
+
+
+![16S Paired-End Sequencing (Illumina.com)](img/paired_end.jpeg)
+
+## Quality Control of DNA sequences
+
+One of the most common sequencing platforms for 16S rRNA amplicon sequencing is Illumina. What we get back from Illumina sequncing is usually a fastq file for each sample in our dataset. If we are using paired-end sequencing, then we usually receive two fastq files for each sample, one is the forward and one in the reverse direction.  
+
+### Fastq Files  
+
+A fastq file contains our DNA sequences, as well as other information regarding the quality of the sequencing reaction. Each sequence within a fastq file has four lines of information:  
+
+**Line 1** begins with a '@' character and is followed by a sequence identifier and an optional description  
+
+**Line 2** is the raw sequence letters (A,T,G,C...)  
+
+**Line 3** begins with a '+' character and is optionally followed by the same sequence identifier  
+
+**Line 4** encodes the quality values for the sequence in Line 2, and contains the same number of symbols as letters in the sequence   
+
+### SHI7 for Quality Control
+
+Before we use our sequences for downstream analysis we must first remove barcodes, adaptors and primers. Also any sequences that are too low in quality should be discarded. If we are analyzing 16S amplicon data, we can also trim our sequences to the expected amplicon size.   
+
+We will be using SHI7 (pronouned shizen) for our sequence quality control. This program will remove the adapters and primers and trim our sequences. It will also stitch our sequencese together (if they are paired-end), and will produce one consolidated file of all of the sequences in the dataset for downstream use.  
+
+The input that SHI7 requires is a directory of fastq files, where:  
+* each sample has its own fastq file (or two fastq files for paired-end (_R1, _R2))  
+* each each fastq file is named as the sample ID (sample1_R1.fastq)  
+
+### Using SHI7 
+
+SHI7 has one main command, `shi7.py`, with different parameters that we can specify. For the full list of parameters you can use the help page `shi7.py -h`. The full documentation for SHI7 is located here: https://github.com/knights-lab/shi7.  
+
+The sequences we are using in this workshop were generated with Nextera adaptors, are paired-end, and have the following type of fastq file name: `2CMK6KO_S230_L001_R2_001.fastq`.  
+
+We will use the following parameters to run SHI7:
+``` {r, eval=F}
+shi7.py -i raw_miseq_data/ -o qc_reads --adaptor Nextera -s _,1
+```
+`-i` Specifies the directory containing our fastq files  
+`-o` Specifes the directory we'd like to create for our output  
+`--adaptor` Specifies which adaptor was used (which adaptor to remove)  
+`-s` Specifies to trim the file name to be use the sample (delimiter, position)  
+
+By default SHI7 will try to stitch the sequences. If you had sequence data that was not paired end, you could specify `-se` to tell SHI7 the data is single end sequencing.
+
+The output of SHI7 is a directory containing 2 files:  
+* `shi.log` which is the log file for the QC process  
+*  `combined_seqs.fna` which is all the combined sequences that passed qc  
+
+### SHI7.log
+
+This file contains all the commands and outputs from the QC process. Information about how many sequences per sample were kept/discarded can be found at the end of the file. To get a peak at this, we can use the `tail` command. 
+
+``` {r, eval=F}
+tail -n 25 shi.log
+```
+
+### Combined_seqs.fna
+
+This file contains all the sequences for each sample. This file will be used in the downstream analysis and must be formated in a particular way. This file is a fasta file, which is slightly different than a fastq file. Fasta files contain just two lines for each sequence:  
+
+**Line 1** begins with a '>' character and is followed by the sample ID the sequence came from, the sequence number for that sample, and some optional description  
+
+**Line 2** is the sequence letters (A,T,G,C...)  
+
+We can get a peak at this by using the `head` command. 
+``` {r, eval=F}
+head combined_seqs.fna
+```
+
+## OTU Picking
+
+The processes of assigning sequences to operational taxonmic units (OTUs) is called OTU picking. Based on a similiarity threshold, we determine which sequences belong to the same group. Often, the similarity threshold we use is 97%. This means that all sequences that are 97% similar will be denoted as the same OTU. We use the term OTU because OTUs can span different levels of the phylogenic tree. For example, one group of sequences that is 97% similar to one another (OTU) may represent Escherichia coli (species level), whereas another group of sequences 97% similar to one another (OTU) may represent Salmonella (genus level). There are 3 main methods to denote which microbes are within a sample, and we will cover these methods below.
+
+### De Novo OTU Picking
+
+De novo OTU picking does not use a reference database. The sequences in your dataset are compared to one another and grouped based on the similarity threshold (97% identity). The resulting groups of sequences are then denoted as OTUs. De novo OTU picking utilizes all sequences from all samples in the analysis. Because it doesn't use a reference database, the taxonomy (name) associated with each OTU is not readily available. De novo OTU picking requires the most computational resources and time in comparison to the other OTU picking methods.
+
+### Closed Reference OTU Picking
+
+Closed reference OTU picking utilizes a reference database of known 16S rRNA sequences. The sequences in your dataset are compared to the reference database and those meeting the 97% identity threshold are donated as the same OTU from the reference database. Closed reference OTU picking will remove all sequences that do not match the reference database within the set threshold (97% identity). The reference database is annotated with taxonomy, so the taxonomy of each OTU in your samples is readily available. Closed reference OTU picking requires the least computational resources and time in comparison to the other OTU picking methods.
+
+
+### Open Reference OTU Picking
+
+Open reference OTU picking combines closed reference OTU picking and de novo OTU picking. First, sequences are compared to the reference database (closed reference OTU picking). Then, the sequences that fail to match the reference database are de novo clustered into new OTUs and combined with the closed-reference OTUs. Open reference OTU picking utilizes all the sequences from all samples in the analysis. Only sequences that align to the reference database will have taxonomy readily available for them. Open reference OTU picking requires more computational resources and time than closed reference OTU picking.
+
+### Using NINJA for OTU Picking
+
+For this workshop we will used a closed reference OTU-picker called NINJA, which stands for NINJA Is Not Just Another aligner. NINJA requires the input to be a single fasta file that contains the clean sequences for each sample. SHI7 is designed to specifically produce the type of input file required by NINJA. The `combined_seqs.fna` file produced by SHI7 is also compatible with other OTU pickers. The default database used by NINJA is the GreenGenes 97% ID database. The full documentation for NINJA is located here: https://github.com/GabeAl/NINJAOPS.
+
+We can run NINJA with the following parameters:
+
+```{r, eval=F}
+ninja.py -i qc_reads/combined_seqs.fna -o ninja_otus -m normal -p 4 -z -d 2
+``
+`-i` Specifies the path to the combined_seqs.fna file  
+`-o` Specifes the directory we'd like to create for our output  
+`-m` Specifies the sensitivity mode to run with (normal is perfect for high quality data)  
+`-p` Specifies the number of threads to use (to speed up the alignment)  
+`-z` Specifies to search both directions  
+`id` Specifies the denoising level; 2 means discard any sequences appearing <2 times  
+
+The output of NINJA is a directory containing 2 files:  
+* `ninja_log.txt` which is the log file for the OTU picking process  
+* `ninja_otutable.biom` which is OTU table  
+
+### ninja_log.txt
+
+This file contains all the commands and outputs from OTU picking. To open this file and look at the performance of OTU picking we can use `nano`. 
+
+``` {r, eval=F}
+nano ninja_log.txt
+```
+
+### ninja_otutable.biom
+
+This file is our OTU table in biom format. An OTU table contains the samples as columns, and OTUs as rows. The values in the table are the number of times an OTU was counted within each sample, as well as some corresponding metadata such as the taxonomy assocaited with each OTU. When in biom format, the file is not human readable. Biom is a way to package a lot of information in a way that doesn't take up too much space. If you call `head` on a biom file, the output will look mostly like gibberish. What is important is that QIIME and other microbiome softwares use biom files because they are smaller and fast to work with. If you want to put your OTU table in a human-readable format you have to convert it to a tab-delimited file. We will cover how to do this later.
+
+
+### Where to ask for help?
+
+* The person sitting next to you during the workshop. Don't hesitate to talk to
+  your neighbor during the workshop, compare your answers, and ask for
+  help. You might also be interested in organizing regular meetings following
+  the workshop to keep learning from each other.
+* Your friendly colleagues: if you know someone with more experience than you,
+  they might be able and willing to help you.
+* [Stack Overflow](http://stackoverflow.com/questions/tagged/r): if your question
+  hasn't been answered before and is well crafted, chances are you will get an
+  answer in less than 5 min. Remember to follow their guidelines on [how to ask
+  a good question](http://stackoverflow.com/help/how-to-ask).
+* The [R-help mailing list](https://stat.ethz.ch/mailman/listinfo/r-help): it is
+  read by a lot of people (including most of the R core team), a lot of people
+  post to it, but the tone can be pretty dry, and it is not always very
+  welcoming to new users. If your question is valid, you are likely to get an
+  answer very fast but don't expect that it will come with smiley faces. Also,
+  here more than anywhere else, be sure to use correct vocabulary (otherwise
+  you might get an answer pointing to the misuse of your words rather than
+  answering your question). You will also have more success if your question is
+  about a base function rather than a specific package.
+* If your question is about a specific package, see if there is a mailing list
+  for it. Usually it's included in the DESCRIPTION file of the package that can
+  be accessed using `packageDescription("name-of-package")`. You may also want
+  to try to email the author of the package directly, or open an issue on the
+  code repository (e.g., GitHub).
+* There are also some topic-specific mailing lists (GIS, phylogenetics, etc...),
+  the complete list is [here](http://www.r-project.org/mail.html).
+
+### More resources
+
+* The [Posting Guide](http://www.r-project.org/posting-guide.html) for the R
+  mailing lists.
+* [How to ask for R help](http://blog.revolutionanalytics.com/2014/01/how-to-ask-for-r-help.html)
+  useful guidelines
+* [This blog post by Jon Skeet](http://codeblog.jonskeet.uk/2010/08/29/writing-the-perfect-question/)
+  has quite comprehensive advice on how to ask programming questions.
+* The [reprex](https://cran.rstudio.com/web/packages/reprex/) package is very helpful to create reproducible examples when asking for help. The [rOpenSci community call "How to ask questions so they get answered"], [Github link](https://github.com/ropensci/commcalls/issues/14) and [video recording](https://vimeo.com/208749032) includes a presentation of the reprex package and of its philosophy.
+
+<p style="text-align: right; font-size: small;">Page build on: `r format(Sys.time())`</p>

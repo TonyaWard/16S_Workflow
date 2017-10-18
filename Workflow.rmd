@@ -60,10 +60,7 @@ Fecal samples were collected from the mice at 6 weeks and 8 weeks of age. DNA is
 For the purposes of this workshop we are also including some fabricated metadata categories that we can use solely for demonstration purposes. **Data in these columns are not from the actual experiment:**  
 * Weight  
 * Food Intake  
-* Fat Pad Mass  
-* BMI Index  
-
-For use the in workshop, the DNA sequences and metadata file are located here: ******************  
+* BMI Type  
 
 
 ## Quality control of DNA sequences

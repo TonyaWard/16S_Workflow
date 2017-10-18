@@ -517,7 +517,7 @@ The `summarize_taxa_through_plots.py` command will:
 ### What are differentiaed taxa?
 When we have discrete groups of data, we can test to see if certain taxa are differentially abundnace between the groups. This would indicate a correlation of that specific taxa with that group of samples. 
 
-### Taxa summaries in QIIME
+### Differential taxa in QIIME
 In QIIME, this task is **NOT performed on your rarefied OTU table**. Instead, we must filter the full OTU table to remove any samples of low depth and any OTUs that are particularly rare. Then with this filtered OTU table we can normalize and test for differences in bacterial abundance across groups. The QIIME commands we need for this are `filter_samples_from_otu_table.py`, `filter_otus_from_otu_table.py` and `differential_abundance.py`. These commands with first remove samples, then OTUs and then normalize and run the tests. We need to use our full OTU table and metadata file for these commands.
 
 Removing low depth samples from OTU table and metadata:  

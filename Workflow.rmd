@@ -515,10 +515,10 @@ The `summarize_taxa_through_plots.py` command will:
 
 ## Differentiated taxa 
 ### What are differentiaed taxa?
-When we have discrete groups of data, we can test to see if certain taxa are differentially abundnace between the groups. This would indicate a correlation of that specific taxa with that group of samples. 
+When we have discrete groups of data, we can test to see if certain taxa are differentially abundant between the groups. This would indicate a correlation of the amount of a specific taxon with the covariate defining the grouping. 
 
 ### Differential taxa in QIIME
-In QIIME, this task is **NOT performed on your rarefied OTU table**. Instead, we must filter the full OTU table to remove any samples of low depth and any OTUs that are particularly rare. Then with this filtered OTU table we can normalize and test for differences in bacterial abundance across groups. The QIIME commands we need for this are `filter_samples_from_otu_table.py`, `filter_otus_from_otu_table.py` and `differential_abundance.py`. These commands with first remove samples, then OTUs and then normalize and run the tests. We need to use our full OTU table and metadata file for these commands.
+In QIIME, this task is **NOT performed on your rarefied OTU table**. Instead, we must filter the full OTU table to remove any samples of low depth and any OTUs that are particularly rare. With this filtered OTU table, we can first normalize the data and then test for differences in bacterial abundance across groups. The QIIME commands we need for this are `filter_samples_from_otu_table.py`, `filter_otus_from_otu_table.py` and `differential_abundance.py`.   
 
 Removing low depth samples from OTU table and metadata:  
 ``` {r, eval=F}
@@ -530,7 +530,7 @@ filter_samples_from_otu_table.py -i ninja_otutable.biom -o 10ksamples_otu.biom -
 `--output_mapping_fp`  Specifies the path to the output metadata/mapping file  
 `-n` Specifies the minimum number of sequences needed to keep a sample  
 
-Removing rare OTUs, keeping those with at least 5 counts and those in at lead 10% of all samples:  
+Removing rare OTUs, keeping those with at least 5 counts and those in at least 10% of all samples (116 samples * 0.1) :  
 ``` {r, eval=F}
 filter_samples_from_otu_table.py -i 10ksamples_otu.biom -o 10ksamples_keepotus.biom -n 10 -s 12
 ```
@@ -553,8 +553,8 @@ differential_abundance.py -i 10ksamples_keepotus.biom -m 10k_mouse_map.txt -c BM
 ### differential_abundance.py outputs  
 The `differential_abundance.py` command will:  
 
-1. Create an output table containing all the OTUs differentially abundance between the sample types named whatever you specified for `-o`  
+1. Create an output table containing all the OTUs differentially abundant between the sample types    
 
-This file can be used to plot the differences in abundances using the group counts and the lower and upper values for confidence intervals.  **As a note, you can also test for differences in abundance using a rarefied OTU table, with `group_significance.py` command.**
+This file can be used to plot the differences in abundance using the `group counts` and the `lower` and `upper` values for confidence intervals.  **As a note, you can also test for differences in abundance using a rarefied OTU table, with the `group_significance.py` command.**
 
 <p style="text-align: right; font-size: small;">Page build on: `r format(Sys.time())`</p>

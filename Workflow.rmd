@@ -62,7 +62,8 @@ For the purposes of this workshop we are also including some fabricated metadata
 * Food Intake  
 * BMI Type  
 
-
+The modified mapping file is available here: 
+![mouse_mapfile.txt](mouse_mapfile.txt)
 ## Quality control of DNA sequences
 
 One of the most common sequencing platforms for 16S rRNA amplicon sequencing is Illumina. What we get back from Illumina sequencing is usually a fastq file for each sample in our dataset. If we are using paired-end sequencing, then we usually receive two fastq files for each sample, one in the forward and another in the reverse direction.  

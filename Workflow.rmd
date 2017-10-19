@@ -514,7 +514,7 @@ The `summarize_taxa_through_plots.py` command will:
 3. Create taxa summary plots in a subdirectory called `taxa_summary_plots`  
 
 ## Differentiated taxa 
-### What are differentiaed taxa?
+### What are differentiated taxa?
 When we have discrete groups of data, we can test to see if certain taxa are differentially abundant between the groups. This would indicate a correlation of the amount of a specific taxon with the covariate defining the grouping. 
 
 ### Differential taxa in QIIME
@@ -522,7 +522,7 @@ In QIIME, this task is **NOT performed on your rarefied OTU table**. Instead, we
 
 Removing low depth samples from OTU table and metadata:  
 ``` {r, eval=F}
-filter_samples_from_otu_table.py -i ninja_otutable.biom -o 10ksamples_otu.biom -m mouse_mapfile.txt --output_mapping_fp 10k_mouse_map.txt -n 10000
+filter_samples_from_otu_table.py -i ninja_otus/ninja_otutable.biom -o 10ksamples_otu.biom -m mouse_mapfile.txt --output_mapping_fp 10k_mouse_map.txt -n 10000
 ```
 `-i` Specifies the path to the full OTU table   
 `-o` Specifies the path to the output OTU table   
@@ -532,9 +532,9 @@ filter_samples_from_otu_table.py -i ninja_otutable.biom -o 10ksamples_otu.biom -
 
 Removing rare OTUs, keeping those with at least 5 counts and those in at least 10% of all samples (116 samples * 0.1) :  
 ``` {r, eval=F}
-filter_samples_from_otu_table.py -i 10ksamples_otu.biom -o 10ksamples_keepotus.biom -n 10 -s 12
+filter_otus_from_otu_table.py -i 10ksamples_otu.biom -o 10ksamples_keepotus.biom -n 10 -s 12
 ```
-`-i` Specifies the path to the fitlered OTU table   
+`-i` Specifies the path to the filtered OTU table   
 `-o` Specifies the path to the output OTU table   
 `-n` Specifies the number of counts an OTU needs to be retained  
 `-s` Specifies the number of samples an OTU needs to be in to be retained  

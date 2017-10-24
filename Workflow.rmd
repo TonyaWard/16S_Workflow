@@ -181,50 +181,6 @@ less ninja_log.txt
 
 This file is our OTU table in biom format. An OTU table contains the samples as columns, and OTUs as rows. The values in the table are the number of times an OTU was counted within each sample, as well as some corresponding metadata such as the taxonomy assocaited with each OTU. When in biom format, the file is not human readable. Biom is a way to package a lot of information in a way that doesn't take up too much space. If you call `head` on a biom file, the output will look mostly like gibberish. What is important is that QIIME and other microbiome softwares use biom files because they are smaller and fast to work with. If you want to put your OTU table in a human-readable format, you have to convert it to a tab-delimited file. We will cover how to do this later.
 
-
-## Exploratory analysis with QIIME
-
-### What is QIIME?
-QIIME stands for Quantitative Insights Into Microbial Ecology, and is pronounced 'chime'.   It is pipeline for performing microbiome analysis of DNA sequences.  Some of the things QIIME can do for us include:  
-
-* Quality filtering
-* OTU picking
-* Assigning Taxonomy 
-* Diversity analysis
-* Visualizations
-* Statistics  
-  
-QIIME uses a mix of other existing softwares and algorithms to perform its tasks.  Because of this we call it a 'wrapper'. That means it wraps up many other existing tools and algorithms in a package that works as one cohesive unit. QIIME has many commands to accomplish various tasks, and these commands can be found at the link below.  
-
- **QIIME Commands:    [http://qiime.org/scripts/](http://qiime.org/scripts/)**
-
-Try going to this page and click some of the commands' links, for example click **`summarize_taxa.py`** and read what this command does, what the inputs are and the examples.
-
-### Using QIIME
-To determine how to run a command, we have to look up the documentation.  We can either go to the command webpage mentioned above and click on the command we want, or we can use the *help* flag for the command we are unsure about.  
-
-By specifying `-h` the command will list the documentation associated with it.  This output will not be as comprehensive as what is available online, but will at least tell us all the possible inputs and outputs.  
-
-### Example
-This command uses the mapping file to collapse the OTU table.  
-```{r eval=F}
-collapse_samples.py -h
-```
-
-Online Documentation Page:
-![](Fig5.png)
-
-
-### Parameter file
-
-Some of the commands in QIIME require a parameter file to specify some extra details. In this workshop we will create a parameters file that will house the parameters needed for alpha and beta diversity. We can create a text file with `nano`. We close the file with the commands located at the bottom of the nano-screen.
-
-```{r, eval=F}
-nano parameters.txt
-beta_diversity:metrics  bray_curtis,unweighted_unifrac,weighted_unifrac
-alpha_diversity:metrics shannon,PD_whole_tree,observed_species
-```
-
 ## Inspecting an OTU table
 
 To double check if our OTU picking was successful and to run summary statistics on our OTU table, we can use the `summarize-table` command from `biom`. Biom is a package used by QIIME, and its commands can be used the same way as the QIIME commands.  The full documentation for biom is here: http://biom-format.org/  
@@ -274,6 +230,49 @@ To open this file we can use `less`.
 
 ``` {r, eval=F}
 less ninja_otutable.txt
+```
+
+## Exploratory analysis with QIIME
+
+### What is QIIME?
+QIIME stands for Quantitative Insights Into Microbial Ecology, and is pronounced 'chime'.   It is pipeline for performing microbiome analysis of DNA sequences.  Some of the things QIIME can do for us include:  
+
+* Quality filtering
+* OTU picking
+* Assigning Taxonomy 
+* Diversity analysis
+* Visualizations
+* Statistics  
+  
+QIIME uses a mix of other existing softwares and algorithms to perform its tasks.  Because of this we call it a 'wrapper'. That means it wraps up many other existing tools and algorithms in a package that works as one cohesive unit. QIIME has many commands to accomplish various tasks, and these commands can be found at the link below.  
+
+ **QIIME Commands:    [http://qiime.org/scripts/](http://qiime.org/scripts/)**
+
+Try going to this page and click some of the commands' links, for example click **`summarize_taxa.py`** and read what this command does, what the inputs are and the examples.
+
+### Using QIIME
+To determine how to run a command, we have to look up the documentation.  We can either go to the command webpage mentioned above and click on the command we want, or we can use the *help* flag for the command we are unsure about.  
+
+By specifying `-h` the command will list the documentation associated with it.  This output will not be as comprehensive as what is available online, but will at least tell us all the possible inputs and outputs.  
+
+### Example
+This command uses the mapping file to collapse the OTU table.  
+```{r eval=F}
+collapse_samples.py -h
+```
+
+Online Documentation Page:
+![](Fig5.png)
+
+
+### Parameter file
+
+Some of the commands in QIIME require a parameter file to specify some extra details. In this workshop we will create a parameters file that will house the parameters needed for alpha and beta diversity. We can create a text file with `nano`. We close the file with the commands located at the bottom of the nano-screen.
+
+```{r, eval=F}
+nano parameters.txt
+beta_diversity:metrics  bray_curtis,unweighted_unifrac,weighted_unifrac
+alpha_diversity:metrics shannon,PD_whole_tree,observed_species
 ```
 
 ## Validating metadata

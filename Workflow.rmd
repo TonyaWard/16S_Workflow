@@ -311,9 +311,9 @@ To prevent any bias, we may see in our diversity analysis we can rarefy our data
 ### Exploring rarefied data with QIIME
 In QIIME, we can first explore our data by looking at alpha diversity across multiple different sequencing depths. This task is performed using the `alpha_rarefaction.py` command that takes your OTU table as input and generates multiple OTU tables, all of which are repeats of rarefactions at specific depths. The output of this command allows us to visualize how measurements in alpha diversity will change across a range of sequence depths per sample. Once we know how the diversity changes with depth, we can create one final rarefied table to use for our alpha diversity and beta diversity calculations.  
 
-The command is run using these parameters:
+The command is run using these parameters: *time estimate: 27 minutes*
 ```{r eval=F,}
-alpha_rarefaction.py -i ninja_otus/ninja_otutable.biom -o alpha_rare -m mouse_mapfile.txt -t 97_otus.tree -p qiime_parameters.txt -e 10000 --min_rare_depth 1000 -n 500
+alpha_rarefaction.py -i ninja_otus/ninja_otutable.biom -o alpha_rare -m mouse_mapfile.txt -t 97_otus.tree -p qiime_parameters.txt --min_rare_depth 1000
 ```
 `-i` Specifies the path to the OTU table  
 `-o` Specifes the directory we'd like to create for our output   
@@ -322,7 +322,6 @@ alpha_rarefaction.py -i ninja_otus/ninja_otutable.biom -o alpha_rare -m mouse_ma
 `-p` Specifies the path to the parameters file  
 `-e` Specifies the maximum depth  
 `--min_rare_depth` Specifies the minimum depth  
-`-n` Specifies the number of sequences in each step  
 
 The `alpha_rarefaction.py` command will do multiple things:
 
@@ -467,7 +466,7 @@ Bray-Curtis takes the sum of the differences in OTU abundances over the sum of t
 
 
 ### Exploring beta diversity with QIIME
-We will use the `beta_diversity_through_plots.py` command in QIIME to calculate and visualize the beta diversities of our samples. We run this command with the following parameters:
+We will use the `beta_diversity_through_plots.py` command in QIIME to calculate and visualize the beta diversities of our samples. We run this command with the following parameters: *time estimate: 7 minutes*
 
 ```{r, eval=F}
 beta_diversity_through_plots.py -i otutable_r10k.biom -o beta_diversity -m mouse_mapfile.txt -t 97_otus.tree -p qiime_parameters.txt
@@ -516,7 +515,7 @@ In QIIME, we can use levels 2-6 to summarize taxa.  We can't use level 1, becaus
 ### Taxa summaries in QIIME
 In QIIME, this task is performed on your rarefied OTU table. The QIIME command `summarize_taxa_through_plots.py` takes your OTU table and collapses the table into the various taxonomic levels. It will then plot the taxa summaries for us.  
 
-The command is run using these parameters:  
+The command is run using these parameters:  *time estimate: 3 minutes*
 
 ``` {r, eval=F}
 summarize_taxa_through_plots.py -i otutable_r10k.biom -o taxa_summary -m mouse_mapfile.txt -c Genotype
@@ -559,7 +558,7 @@ filter_otus_from_otu_table.py -i 10ksamples_otu.biom -o 10ksamples_keepotus.biom
 `-n` Specifies the number of counts an OTU needs to be retained  
 `-s` Specifies the number of samples an OTU needs to be in to be retained  
 
-Test for taxa differentially abundant between groups. The default is set to normalize the data with MetagenomeSeq’s fitZIG:
+Test for taxa differentially abundant between groups. The default is set to normalize the data with MetagenomeSeq’s fitZIG: *time estimate: 10 minutes*
 ```{r, eval=F}
 differential_abundance.py -i 10ksamples_keepotus.biom -m 10k_mouse_map.txt -c BMI_Type -x normal -y overweight -o diff_otus.txt
 ```

@@ -5,9 +5,9 @@ hours: 6
 ---
 
 
-```{r, echo=FALSE}
-knitr::opts_chunk$set(results='hide')
-```
+#```{r, echo=FALSE}
+#knitr::opts_chunk$set(results='hide')
+#```
 
 ------------
 

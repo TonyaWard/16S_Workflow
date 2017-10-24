@@ -270,7 +270,7 @@ The new OTU table will have:
 * An extra line at the top of the file 
 * Taxonomy in the last column
 
-To open this file and look at the summary we can use `less`. 
+To open this file we can use `less`. 
 
 ``` {r, eval=F}
 less ninja_otutable.txt

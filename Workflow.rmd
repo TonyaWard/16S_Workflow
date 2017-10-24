@@ -252,7 +252,7 @@ less OTU_summary.txt
 
 ## Converting an OTU table from .biom to .txt
 
-Right now the OTU table we have is in biom format, which is not human readable. If we want the OTU table in a form easy to read and load into R, we can convert it to a tab delimitted text file with `biom convert`
+Right now the OTU table we have is in biom format, which is not human readable. If we want the OTU table in a form easy to read and load into R, we can convert it to a tab separated text file with `biom convert`
 
 ### Biom convert
 To create a .txt file of our OTU table we can use the `biom convert` command:
@@ -261,8 +261,8 @@ biom convert -i ninja_otus/ninja_otutable.biom -o ninja_otus/ninja_otutable.txt 
 ```  
 `-i` Specifies the path to the OTU table created by NINJA  
 `-o` Specifes the path to the summary file we'd like to create  
-`--to-tsv` Specifies that we want to make it a tab delimitted text file
-`--header-key` Specifies to include the taxonomy for each OTU
+`--to-tsv` Specifies that we want to make it a tab separated text file  
+`--header-key` Specifies to include the taxonomy for each OTU  
 
 The new OTU table will have:   
 * OTUs as the rows 

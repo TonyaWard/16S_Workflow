@@ -552,4 +552,3 @@ The `differential_abundance.py` command will:
 
 This file can be used to plot the differences in abundance using the `group counts` and the `lower` and `upper` values for confidence intervals.  **As a note, you can also test for differences in abundance using a rarefied OTU table, with the `group_significance.py` command.**
 
-#<p style="text-align: right; font-size: small;">Page build on: `r format(Sys.time())`</p>

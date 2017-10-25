@@ -453,7 +453,7 @@ The unique fraction metric, or UniFrac, measures the phylogenetic distance betwe
 In the UniFrac metric, the relative abundances of taxa is not taken into consideration (referred to as unweighted UniFrac distance). There is a second metric known as weighted UniFrac distance, that weights each OTU based on it's relative abundance. Both metrics are criticized for giving either too much (unweighted) or too little (weighted) value to rare taxa, but both have value in showing different aspects of community diversity.  
 
 #### Bray-Curtis dissimilarity  
-Bray-Curtis takes the sum of the differences in OTU abundances over the sum of the total OTU abundances between samples. This metric does not take relatedness of the otus into consideration (phylogeny).  
+Bray-Curtis is 1 minus the sum of the differences in OTU abundances over the sum of the total OTU abundances between samples. This metric does not take relatedness of the otus into consideration (phylogeny).  
 
 
 **Summary of beta diversity metrics**  
@@ -479,12 +479,11 @@ beta_diversity_through_plots.py -i otutable_r10k.biom -o beta_diversity -m mouse
 
 The `beta_diversity_through_plots.py` command will do multiple things:  
 
-1. Randomly subsample `otu_table.biom` to even number of sequences per sample (specified with `-e`).   
-2. Run `beta_diversity.py` for the diversity metrics wanted (specified with the parameters file via `-p`) and create distance matrices in the main output directory (`metric_dm.txt`).   
-3. Perform a principal coordinates analysis on the result of Step 2 in the main output directory (`metric_pc.txt`).   
-4. Generate 2D and 3D plots for all mapping fields in the `metric_emperor_pcoa_plot/` subdirectories.   
-5. Delete all intermediate files generated to do the analysis.   
-6. Create a log file and overall rarefaction plot within the main output directory.   
+1. Run `beta_diversity.py` for the diversity metrics wanted (specified with the parameters file via `-p`) and create distance matrices in the main output directory (`metric_dm.txt`).   
+2. Perform a principal coordinates analysis on the result of Step 2 in the main output directory (`metric_pc.txt`).   
+3. Generate 2D and 3D plots for all mapping fields in the `metric_emperor_pcoa_plot/` subdirectories.   
+4. Delete all intermediate files generated to do the analysis.   
+5. Create a log file and overall rarefaction plot (.html) within the main output directory.   
 
 ### beta_diversity_through_plots.py outputs
 You will know `beta_diversity_through_plots.py` is done when you have the following files in your output directory (`-o`):  

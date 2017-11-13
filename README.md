@@ -1,6 +1,6 @@
 # 16S Amplicon Sequencing Workflow
 
-This workflow requires:
+## This workflow requires:
 *	QIIME version 1.9.1 or lower
 *	SHI7 v.0.9.3 (https://github.com/knights-lab/shi7)
 *	NINJA v.1.5.1 (https://github.com/GabeAl/NINJA-OPS)

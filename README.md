@@ -8,7 +8,8 @@ This workflow requires:
 *	Basic skills in working from the command line (recommended)
 
 
-The entire workflow is outlined in the .rmd file. It includes:
+The entire workflow is outlined in the Workflow.rmd file. You can view it easily in a browser by clicking on it. 
+The workflow includes:
 *	Quality control of next generation sequencing data with SHI7
 *	Closed reference OTU picking with NINJA
 *	Data Exploration with QIIME

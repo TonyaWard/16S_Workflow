@@ -1,4 +1,4 @@
-16S Amplicon Sequencing Workflow
+# 16S Amplicon Sequencing Workflow
 
 This workflow requires:
 *	QIIME version 1.9.1 or lower
